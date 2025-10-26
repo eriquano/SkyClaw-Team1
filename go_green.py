@@ -1,112 +1,146 @@
+#!/usr/bin/env python3
+"""
+go_green.py — Autonomous PX4 mission:
+Locate green box → hover above → return to start
+"""
+
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from geometry_msgs.msg import PoseStamped
+from mavros_msgs.msg import State
+from cv_bridge import CvBridge
 import cv2
 import numpy as np
-import argparse
 import math
-import socket, struct
-from collections import deque
-import mavsdk
-# import rclpy
-import asyncio
-from Video import Video
-# from rclpy.node import Node
-# from geometry_msgs.msg import Vector3Stamped
+import time
 
+LOWER_GREEN = np.array([40, 40, 40])
+UPPER_GREEN = np.array([80, 255, 255])
+PIXEL_TO_METER = 0.005  # rough scale factor — tune for your camera setup
+APPROACH_SPEED = 0.5
+HOVER_TIME = 5.0
+CENTER_TOL = 40  # pixels tolerance for "aligned"
 
-async def connect():
+class GoGreen(Node):
+    def __init__(self):
+        super().__init__('go_green')
 
-    drone = System()
-    await drone.connect(system_address="udp://:14540")
+        self.bridge = CvBridge()
+        self.state = None
+        self.pose = None
+        self.start_pose = None
+        self.target_found = False
+        self.hovering = False
+        self.hover_start = None
 
-    status_text_task = asyncio.ensure_future(print_status_text(drone))
+        # Subscribers
+        self.create_subscription(Image, '/camera_down/image_raw', self.image_cb, 10)
+        self.create_subscription(PoseStamped, '/mavros/local_position/pose', self.pose_cb, 10)
+        self.create_subscription(State, '/mavros/state', self.state_cb, 10)
 
-    print("Waiting for drone to connect...")
-    async for state in drone.core.connection_state():
-        if state.is_connected:
-            print(f"-- Connected to drone!")
-            break
+        # Publisher for position control
+        self.setpoint_pub = self.create_publisher(PoseStamped, '/mavros/setpoint_position/local', 10)
 
-    print("Waiting for drone to have a global position estimate...")
-    async for health in drone.telemetry.health():
-        if health.is_global_position_ok and health.is_home_position_ok:
-            print("-- Global position estimate OK")
-            break
+        self.timer = self.create_timer(0.1, self.control_loop)
+        self.get_logger().info("go_green node started")
 
-    print("-- Arming")
-    await drone.action.arm()
+    def state_cb(self, msg):
+        self.state = msg
 
-# currently not working
-# also want to add front-facing camera
-async def camera():
-    """
-    Adds downward facing camera in Gazebo Classic
+    def pose_cb(self, msg):
+        self.pose = msg
+        if self.start_pose is None:
+            self.start_pose = msg.pose
+            self.get_logger().info("Start position recorded")
 
-    Parameters
-    ---------
-    None
+    def image_cb(self, msg: Image):
+        cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        hsv = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, LOWER_GREEN, UPPER_GREEN)
 
-    Returns
-    -------
-    None
-    """
-    # await drone.action.arm()
-    # await drone.action.takeoff()
-    video_source = Video(port=5601)
+        # Find largest contour (green box)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not contours:
+            self.target_found = False
+            return
 
-    while True:
-        if video_source.frame_available:
-            frame = video_source.frame()
+        cnt = max(contours, key=cv2.contourArea)
+        if cv2.contourArea(cnt) < 200:
+            self.target_found = False
+            return
 
-            cvs.imshow(f"Drone Camera", frame)
-            cvs.waitKey(1)
+        x, y, w, h = cv2.boundingRect(cnt)
+        cx = x + w // 2
+        cy = y + h // 2
 
-# look for stuff in TAR github.. maybe MAVtesting
+        h_img, w_img = cv_image.shape[:2]
+        dx = cx - w_img // 2
+        dy = cy - h_img // 2
 
-async def print_status_text(drone):
-    """
-    Check status of drone
+        self.target_found = True
+        self.target_offset = (dx, dy)
 
-    Used in asyncio.connect()
-    """
-    try:
-        async for status_text in drone.telemetry.status_text():
-            print(f"Status: {status_text.type}: {status_text.text}")
-    except asyncio.CancelledError:
-        return
+        cv2.rectangle(cv_image, (x, y), (x+w, y+h), (0,255,0), 2)
+        cv2.circle(cv_image, (cx, cy), 5, (0,0,255), -1)
+        cv2.imshow("Downward Camera", cv_image)
+        cv2.waitKey(1)
 
-# take off
-# how high go?
-async def takeoff():
-    print("-- Taking off")
-    await drone.action.takeoff()
+    def control_loop(self):
+        if self.pose is None or self.start_pose is None:
+            return
 
-    await asyncio.sleep(10)
+        if not self.target_found:
+            self.get_logger().info_throttle(2.0, "Searching for green box...")
+            return
 
-# run green tracker
-# import greenTracker.py
-# greenTracker.function()
+        dx_px, dy_px = self.target_offset
+        if abs(dx_px) < CENTER_TOL and abs(dy_px) < CENTER_TOL:
+            # Hover
+            if not self.hovering:
+                self.hovering = True
+                self.hover_start = time.time()
+                self.get_logger().info("Hovering above target...")
+            elif time.time() - self.hover_start > HOVER_TIME:
+                self.get_logger().info("Returning to start position...")
+                self.fly_to(self.start_pose.position.x,
+                            self.start_pose.position.y,
+                            self.start_pose.position.z)
+        else:
+            # Move toward green box
+            dx = -dx_px * PIXEL_TO_METER
+            dy = -dy_px * PIXEL_TO_METER
+            self.fly_relative(dx, dy)
 
-# if see green, hover
-# how long hover?
-# how high hover?
-# how can it see the green? do i need to add camera?
-# will it know if sees green outside aruco markers?
-# go back to land pad?
+    def fly_relative(self, dx, dy):
+        target = PoseStamped()
+        target.header.stamp = self.get_clock().now().to_msg()
+        target.pose.position.x = self.pose.pose.position.x + dx
+        target.pose.position.y = self.pose.pose.position.y + dy
+        target.pose.position.z = self.pose.pose.position.z
+        target.pose.orientation = self.pose.pose.orientation
+        self.setpoint_pub.publish(target)
 
-# land
-async def land():
-    print("-- Landing")
-    await drone.action.land()
-
-    status_text_task.cancel()
+    def fly_to(self, x, y, z):
+        target = PoseStamped()
+        target.header.stamp = self.get_clock().now().to_msg()
+        target.pose.position.x = x
+        target.pose.position.y = y
+        target.pose.position.z = z
+        target.pose.orientation = self.pose.pose.orientation
+        self.setpoint_pub.publish(target)
 
 def main():
-    asyncio.connect()
-    asyncio.camera()
-    asyncio.takeoff()
-    # asyncio.find green and go
-    # asyncio go down and back up
-    # return to place
-    asyncio.land()
+    rclpy.init()
+    node = GoGreen()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+        cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()
