@@ -1,0 +1,11 @@
+certifi==2025.8.3
+charset-normalizer==3.4.3
+Cython==3.1.4
+idna==3.10
+imutils==0.5.4
+numpy==1.24.4
+opencv-python==4.12.0.88
+pkg_resources==0.0.0
+pyzed @ file:///tmp/selfgz30578/pyzed-5.0-cp38-cp38-linux_x86_64.whl#sha256=519ff2205b9c15f1bd274c7a38fd690371bab3ea22372442bab25151daef2f9a
+requests==2.32.4
+urllib3==2.2.3
