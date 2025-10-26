@@ -8,7 +8,6 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PoseStamped, Quaternion
-from mavros_msgs.msg import State, CommandBool, SetMode
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
