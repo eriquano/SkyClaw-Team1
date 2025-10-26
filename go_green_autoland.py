@@ -201,7 +201,11 @@ class GoGreenAuto(Node):
 
                 # Descend when aligned
                 if aligned_xy and aligned_yaw:
-                    self.alt_target = max(self.alt_target - DESCENT_RATE * 0.1, LAND_ALT)
+                    increment = DESCENT_RATE * 0.1  # This is a positive value (e.g., 0.02)
+                    self.alt_target = self.alt_target + increment
+                    # Clamp the value so it doesn't go *past* LAND_ALT
+                    if self.alt_target > LAND_ALT:
+                        self.alt_target = LAND_ALT
                     self.send_setpoint(self.pos.x, self.pos.y, self.alt_target, self.current_yaw)
                     if abs(self.alt_target - LAND_ALT) < ALT_TOL:
                         self.hover_start = now
@@ -210,7 +214,8 @@ class GoGreenAuto(Node):
                 else:
                     self.send_setpoint(target_x, target_y, self.alt_target, target_yaw)
             else:
-                self.get_logger().warn("Downward camera lost — hovering.")
+                self.get_logger().warn("Downward camera lost — hovering.")\
+                self.send_setpoint(self.pos.x, self.pos.y, self.alt_target, self.current_yaw)
             return
 
         # ---------------- HOVER ---------------- #
