@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 go_green_autoland.py
-Fully autonomous precision landing using PX4 + Micro XRCE-DDS.
-
+Fully autonomous green object tracking and landing using PX4 + Micro XRCE-DDS.
+Uses front and downward-facing cameras to locate a green object.
 Phases:
-  INIT → TAKEOFF → TRACK_TARGET → DESCENT → LAND → DONE
+  INIT → TAKEOFF → SEARCH → APPROACH → HOVER → RETURN → LAND → DONE
 """
 
 import rclpy
@@ -14,22 +14,19 @@ from px4_msgs.msg import VehicleCommand, VehicleStatus, VehicleLocalPosition, Tr
 import math
 import time
 
-
 # ---------------- CONFIGURATION ---------------- #
 TAKEOFF_ALT = -3.0          # meters (NED frame)
 LAND_ALT = -0.1             # final altitude before LAND
 XY_GAIN = 0.5               # position correction scaling
 YAW_GAIN = 0.5              # yaw correction scaling
-DESCENT_RATE = 0.2          # m/s when well-aligned
-DESCENT_THRESHOLD = 0.2     # m of alignment to start descent
-CENTER_THRESHOLD = 0.1      # m — stop moving if within this offset
-YAW_THRESHOLD = math.radians(5.0)  # 5° yaw alignment
-HOVER_TIME = 3.0            # seconds hover before LAND
+DESCENT_RATE = 0.2          # m/s descent when aligned
+CENTER_THRESHOLD = 0.1      # m — considered aligned
+YAW_THRESHOLD = math.radians(5.0)  # radians
+HOVER_TIME = 3.0            # seconds hover
 VECTOR_TIMEOUT = 1.0        # seconds before vector considered lost
 ALT_TOL = 0.2               # takeoff altitude tolerance
 OFFBOARD_MODE = 6
 # ------------------------------------------------ #
-
 
 class GoGreenAuto(Node):
     def __init__(self):
@@ -37,23 +34,31 @@ class GoGreenAuto(Node):
 
         self.status = None
         self.pos = None
-        self.last_vector = None
-        self.last_vector_time = 0.0
-        self.phase = "init"
-        self.hover_start = None
         self.current_yaw = 0.0
-        self.alt_target = TAKEOFF_ALT
         self.setpoint_stream_counter = 0
 
-        # ROS 2 subscriptions (PX4 DDS topics)
+        # Vector info
+        self.front_vector = None
+        self.down_vector = None
+        self.last_front_time = 0.0
+        self.last_down_time = 0.0
+
+        # Mission state
+        self.phase = "init"
+        self.alt_target = TAKEOFF_ALT
+        self.hover_start = None
+
+        # ROS 2 subscriptions
         self.create_subscription(VehicleStatus, "/fmu/out/vehicle_status", self.status_cb, 10)
         self.create_subscription(VehicleLocalPosition, "/fmu/out/vehicle_local_position", self.pos_cb, 10)
-        self.create_subscription(Vector3Stamped, "/landing_vector", self.vector_cb, 10)
+        self.create_subscription(Vector3Stamped, "/landing_vector_front", self.front_vector_cb, 10)
+        self.create_subscription(Vector3Stamped, "/landing_vector_down", self.down_vector_cb, 10)
 
         # Publishers
         self.cmd_pub = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", 10)
         self.sp_pub = self.create_publisher(TrajectorySetpoint, "/fmu/in/trajectory_setpoint", 10)
 
+        # Main loop timer
         self.create_timer(0.1, self.loop)
         self.get_logger().info("GoGreen AutoLand node initialized.")
 
@@ -63,11 +68,15 @@ class GoGreenAuto(Node):
 
     def pos_cb(self, msg):
         self.pos = msg
-        self.current_yaw = msg.heading  # radians
+        self.current_yaw = msg.heading
 
-    def vector_cb(self, msg):
-        self.last_vector = (msg.vector.x, msg.vector.y, msg.vector.z)  # z = yaw error
-        self.last_vector_time = time.time()
+    def front_vector_cb(self, msg):
+        self.front_vector = (msg.vector.x, msg.vector.y, msg.vector.z)
+        self.last_front_time = time.time()
+
+    def down_vector_cb(self, msg):
+        self.down_vector = (msg.vector.x, msg.vector.y, msg.vector.z)
+        self.last_down_time = time.time()
 
     # ---------------- PX4 Command Helpers ---------------- #
     def arm(self, arm=True):
@@ -85,8 +94,8 @@ class GoGreenAuto(Node):
     def set_mode(self):
         cmd = VehicleCommand()
         cmd.command = VehicleCommand.VEHICLE_CMD_DO_SET_MODE
-        cmd.param1 = 6.0  # <--- FIX: Set main mode to 6 (Offboard)
-        cmd.param2 = 0.0  # Sub-mode (0 for Offboard)
+        cmd.param1 = OFFBOARD_MODE
+        cmd.param2 = 0.0
         cmd.target_system = 1
         cmd.target_component = 1
         cmd.source_system = 1
@@ -119,98 +128,118 @@ class GoGreenAuto(Node):
 
         now = time.time()
 
+        # ---------------- INIT ---------------- #
         if self.phase == "init":
-            # We must send setpoints *before* we can switch to Offboard
-            # Send 20 setpoints (2 seconds) to establish the stream
             if self.setpoint_stream_counter < 20:
-                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw) # Send a "hold" setpoint
+                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw)
                 self.setpoint_stream_counter += 1
                 return
 
-            # 1. Stream established, request Offboard mode
             if self.status.nav_state != VehicleStatus.NAVIGATION_STATE_OFFBOARD:
                 self.set_mode()
-                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw) # Keep sending setpoints
+                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw)
                 return
 
-            # 2. Mode is Offboard, request Arm
             if self.status.arming_state != VehicleStatus.ARMING_STATE_ARMED:
                 self.arm(True)
-                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw) # Keep sending setpoints
+                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw)
                 return
 
             self.get_logger().info("Armed and in Offboard mode. Phase: TAKEOFF")
             self.phase = "takeoff"
             return
 
-        # TAKEOFF phase
+        # ---------------- TAKEOFF ---------------- #
         if self.phase == "takeoff":
             if abs(self.pos.z - TAKEOFF_ALT) > ALT_TOL:
                 self.send_setpoint(0.0, 0.0, TAKEOFF_ALT, self.current_yaw)
             else:
-                self.phase = "track_target"
-                self.get_logger().info("Reached takeoff altitude — starting target tracking.")
+                self.phase = "search"
+                self.get_logger().info("Reached takeoff altitude — starting SEARCH phase.")
             return
 
-        # TRACK_TARGET phase
-        if self.phase == "track_target":
-            if self.last_vector and now - self.last_vector_time < VECTOR_TIMEOUT:
-                dx, dy, yaw_err = self.last_vector
-
-                # Compute alignment metrics
-                aligned_xy = math.hypot(dx, dy) < DESCENT_THRESHOLD
-                aligned_yaw = abs(yaw_err) < YAW_THRESHOLD
-
-                # Compute target motion
+        # ---------------- SEARCH (Front Camera with Spiral Search) ---------------- #
+        if self.phase == "search":
+            if self.front_vector and now - self.last_front_time < VECTOR_TIMEOUT:
+                dx, dy, yaw_err = self.front_vector
                 target_x = self.pos.x + XY_GAIN * dx
                 target_y = self.pos.y + XY_GAIN * dy
                 target_yaw = self.current_yaw - YAW_GAIN * yaw_err
 
-                # Begin gentle descent if well aligned
-                if aligned_xy and aligned_yaw:
-                    # Begin gentle descent if well aligned
-                    # FIX: Add a positive increment. (DESCENT_RATE * 0.1) = 0.02
-                    # alt_target goes from -3.0 -> -2.98 -> -2.96... up to LAND_ALT
-                    self.alt_target = max(self.alt_target + (DESCENT_RATE * 0.1), TAKEOFF_ALT) # Failsafe
-                    self.alt_target = min(self.alt_target, LAND_ALT) # <-- This is wrong
-                    
-                    # --- Let's use simpler logic ---
-                    # FIX: Add a positive increment to move from -3.0 towards -0.1
-                    increment = DESCENT_RATE * 0.1  # This is 0.02
-                    self.alt_target = self.alt_target + increment
-                    
-                    # Clamp the value so it doesn't go past LAND_ALT
-                    if self.alt_target > LAND_ALT:
-                        self.alt_target = LAND_ALT
+                self.send_setpoint(target_x, target_y, self.pos.z, target_yaw)
 
-                    self.get_logger().info_throttle(1.0, f"Aligned — descending to {self.alt_target:.2f} m")
-                else:
-                    self.get_logger().info_throttle(
-                        2.0, f"dx={dx:.2f} dy={dy:.2f} yaw_err={math.degrees(yaw_err):.1f}°")
-
-                self.send_setpoint(target_x, target_y, self.alt_target, target_yaw)
-
-                # Check landing condition
-                if self.alt_target >= LAND_ALT:
-                    self.phase = "land"
-                    self.get_logger().info("At landing height — initiating LAND command.")
+                if math.hypot(dx, dy) < CENTER_THRESHOLD:
+                    self.get_logger().info("Front camera aligned — switching to APPROACH phase.")
+                    self.phase = "approach"
             else:
-                # No vector input: hover
-                self.get_logger().warn_throttle(5.0, "Lost target — hovering.")
-                self.send_setpoint(self.pos.x, self.pos.y, self.alt_target, self.current_yaw)
-                if not self.hover_start:
-                    self.hover_start = now
-                elif now - self.hover_start > HOVER_TIME:
-                    self.phase = "land"
+                # Spiral search pattern
+                if not hasattr(self, "search_angle"):
+                    self.search_angle = 0.0
+                    self.search_radius = 0.5  # start radius in meters
+                    self.search_increment = 0.1  # radius increment per loop
+                    self.search_speed = 0.2  # m per setpoint step
+
+                self.search_angle += 0.1  # radians per loop
+                self.search_radius += self.search_increment * 0.1  # slowly expand radius
+
+                target_x = self.search_radius * math.cos(self.search_angle)
+                target_y = self.search_radius * math.sin(self.search_angle)
+
+                self.send_setpoint(target_x, target_y, self.pos.z, self.current_yaw)
+                self.get_logger().warn_throttle(5.0, f"Searching (spiral) at x={target_x:.2f}, y={target_y:.2f}")
+
+        # ---------------- APPROACH (Downward Camera) ---------------- #
+        if self.phase == "approach":
+            if self.down_vector and now - self.last_down_time < VECTOR_TIMEOUT:
+                dx, dy, yaw_err = self.down_vector
+                target_x = self.pos.x + XY_GAIN * dx
+                target_y = self.pos.y + XY_GAIN * dy
+                target_yaw = self.current_yaw - YAW_GAIN * yaw_err
+
+                aligned_xy = math.hypot(dx, dy) < CENTER_THRESHOLD
+                aligned_yaw = abs(yaw_err) < YAW_THRESHOLD
+
+                # Descend when aligned
+                if aligned_xy and aligned_yaw:
+                    self.alt_target = max(self.alt_target - DESCENT_RATE * 0.1, LAND_ALT)
+                    self.send_setpoint(self.pos.x, self.pos.y, self.alt_target, self.current_yaw)
+                    if abs(self.alt_target - LAND_ALT) < ALT_TOL:
+                        self.hover_start = now
+                        self.phase = "hover"
+                        self.get_logger().info("Reached hover altitude — starting HOVER phase.")
+                else:
+                    self.send_setpoint(target_x, target_y, self.alt_target, target_yaw)
+            else:
+                self.get_logger().warn("Downward camera lost — hovering.")
             return
 
-        # LAND phase
+        # ---------------- HOVER ---------------- #
+        if self.phase == "hover":
+            self.send_setpoint(self.pos.x, self.pos.y, self.alt_target, self.current_yaw)
+            if now - self.hover_start > HOVER_TIME:
+                self.get_logger().info("Hover complete — returning to takeoff point.")
+                self.phase = "return"
+            return
+
+        # ---------------- RETURN ---------------- #
+        if self.phase == "return":
+            dx = -self.pos.x
+            dy = -self.pos.y
+            target_x = self.pos.x + XY_GAIN * dx
+            target_y = self.pos.y + XY_GAIN * dy
+            self.send_setpoint(target_x, target_y, TAKEOFF_ALT, self.current_yaw)
+            if math.hypot(self.pos.x, self.pos.y) < CENTER_THRESHOLD:
+                self.phase = "land"
+                self.get_logger().info("Return complete — initiating LAND command.")
+            return
+
+        # ---------------- LAND ---------------- #
         if self.phase == "land":
             self.land_cmd()
             self.phase = "done"
             return
 
-        # DONE
+        # ---------------- DONE ---------------- #
         if self.phase == "done":
             self.get_logger().info_throttle(5.0, "Mission complete.")
             return
