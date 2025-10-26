@@ -145,8 +145,13 @@ class GoGreen(Node):
                     self.phase = "refine_down"
                     self.get_logger().info("Switching to downward camera refinement.")
             else:
-                self.fly_relative(0.0, -dx * PIXEL_TO_METER, 0.0)
-            return
+                # Map camera's vertical error (dy) to drone's forward/backward (x)
+                # Map camera's horizontal error (dx) to drone's left/right (y)
+                # The signs depend on camera orientation, but this is a common mapping:
+                fwd_speed =  dy * PIXEL_TO_METER
+                side_speed = -dx * PIXEL_TO_METER 
+                self.fly_relative(fwd_speed, side_speed, 0.0)
+                return
 
         # ---- REFINE DOWN ----
         if self.phase == "refine_down":
