@@ -133,6 +133,11 @@ class GoGreen(Node):
 
         # ---- APPROACH FRONT ----
         if self.phase == "approach_front":
+            if self.front_target is None:
+                self.get_logger().warn("Lost front target, holding position.")
+                self.phase = "search_front" # <-- Optionally, go back to searching
+                return # Do nothing, which holds position
+
             dx, dy = self.front_target if self.front_target else (0, 0)
             if abs(dx) < CENTER_TOL:
                 self.fly_relative(0.5 * APPROACH_SPEED, 0.0, 0.0)
