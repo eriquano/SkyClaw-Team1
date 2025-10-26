@@ -27,7 +27,7 @@ YAW_THRESHOLD = math.radians(5.0)  # 5° yaw alignment
 HOVER_TIME = 3.0            # seconds hover before LAND
 VECTOR_TIMEOUT = 1.0        # seconds before vector considered lost
 ALT_TOL = 0.2               # takeoff altitude tolerance
-OFFBOARD_MODE = 1
+OFFBOARD_MODE = 6
 # ------------------------------------------------ #
 
 
@@ -43,6 +43,7 @@ class GoGreenAuto(Node):
         self.hover_start = None
         self.current_yaw = 0.0
         self.alt_target = TAKEOFF_ALT
+        self.setpoint_stream_counter = 0
 
         # ROS 2 subscriptions (PX4 DDS topics)
         self.create_subscription(VehicleStatus, "/fmu/out/vehicle_status", self.status_cb, 10)
@@ -84,7 +85,8 @@ class GoGreenAuto(Node):
     def set_mode(self):
         cmd = VehicleCommand()
         cmd.command = VehicleCommand.VEHICLE_CMD_DO_SET_MODE
-        cmd.param1 = float(OFFBOARD_MODE)
+        cmd.param1 = 6.0  # <--- FIX: Set main mode to 6 (Offboard)
+        cmd.param2 = 0.0  # Sub-mode (0 for Offboard)
         cmd.target_system = 1
         cmd.target_component = 1
         cmd.source_system = 1
@@ -118,10 +120,27 @@ class GoGreenAuto(Node):
         now = time.time()
 
         if self.phase == "init":
-            self.set_mode()
-            self.arm(True)
+            # We must send setpoints *before* we can switch to Offboard
+            # Send 20 setpoints (2 seconds) to establish the stream
+            if self.setpoint_stream_counter < 20:
+                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw) # Send a "hold" setpoint
+                self.setpoint_stream_counter += 1
+                return
+
+            # 1. Stream established, request Offboard mode
+            if self.status.nav_state != VehicleStatus.NAVIGATION_STATE_OFFBOARD:
+                self.set_mode()
+                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw) # Keep sending setpoints
+                return
+
+            # 2. Mode is Offboard, request Arm
+            if self.status.arming_state != VehicleStatus.ARMING_STATE_ARMED:
+                self.arm(True)
+                self.send_setpoint(0.0, 0.0, 0.0, self.current_yaw) # Keep sending setpoints
+                return
+
+            self.get_logger().info("Armed and in Offboard mode. Phase: TAKEOFF")
             self.phase = "takeoff"
-            self.get_logger().info("Phase: TAKEOFF")
             return
 
         # TAKEOFF phase
@@ -149,7 +168,21 @@ class GoGreenAuto(Node):
 
                 # Begin gentle descent if well aligned
                 if aligned_xy and aligned_yaw:
-                    self.alt_target = max(self.alt_target + DESCENT_RATE * 0.1 * TAKEOFF_ALT, LAND_ALT)
+                    # Begin gentle descent if well aligned
+                    # FIX: Add a positive increment. (DESCENT_RATE * 0.1) = 0.02
+                    # alt_target goes from -3.0 -> -2.98 -> -2.96... up to LAND_ALT
+                    self.alt_target = max(self.alt_target + (DESCENT_RATE * 0.1), TAKEOFF_ALT) # Failsafe
+                    self.alt_target = min(self.alt_target, LAND_ALT) # <-- This is wrong
+                    
+                    # --- Let's use simpler logic ---
+                    # FIX: Add a positive increment to move from -3.0 towards -0.1
+                    increment = DESCENT_RATE * 0.1  # This is 0.02
+                    self.alt_target = self.alt_target + increment
+                    
+                    # Clamp the value so it doesn't go past LAND_ALT
+                    if self.alt_target > LAND_ALT:
+                        self.alt_target = LAND_ALT
+
                     self.get_logger().info_throttle(1.0, f"Aligned — descending to {self.alt_target:.2f} m")
                 else:
                     self.get_logger().info_throttle(
@@ -158,7 +191,7 @@ class GoGreenAuto(Node):
                 self.send_setpoint(target_x, target_y, self.alt_target, target_yaw)
 
                 # Check landing condition
-                if self.alt_target <= LAND_ALT + 0.05:
+                if self.alt_target >= LAND_ALT:
                     self.phase = "land"
                     self.get_logger().info("At landing height — initiating LAND command.")
             else:
