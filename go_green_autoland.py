@@ -214,7 +214,7 @@ class GoGreenAuto(Node):
                 else:
                     self.send_setpoint(target_x, target_y, self.alt_target, target_yaw)
             else:
-                self.get_logger().warn("Downward camera lost — hovering.")\
+                self.get_logger().warn("Downward camera lost — hovering.")
                 self.send_setpoint(self.pos.x, self.pos.y, self.alt_target, self.current_yaw)
             return
 
