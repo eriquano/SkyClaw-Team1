@@ -151,7 +151,7 @@ class GoGreen(Node):
                 fwd_speed =  dy * PIXEL_TO_METER
                 side_speed = -dx * PIXEL_TO_METER 
                 self.fly_relative(fwd_speed, side_speed, 0.0)
-                return
+            return
 
         # ---- REFINE DOWN ----
         if self.phase == "refine_down":
