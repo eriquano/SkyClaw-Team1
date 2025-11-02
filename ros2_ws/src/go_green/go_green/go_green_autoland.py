@@ -7,6 +7,8 @@ Phases:
   INIT → TAKEOFF → SEARCH → APPROACH → HOVER → RETURN → LAND → DONE
 """
 
+"""We were testing if the code from chat worked--it didn't :("""
+
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Vector3Stamped

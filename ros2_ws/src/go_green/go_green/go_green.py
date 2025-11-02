@@ -1,4 +1,7 @@
 
+"""idrk what its supposed to do but rn it just takes off and finds the green cube, prbly will be used for the demo"""
+"""I think its supposed to take in a vector and move to the box"""
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy, qos_profile_sensor_data
