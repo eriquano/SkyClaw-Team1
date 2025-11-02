@@ -1,0 +1,5 @@
+[console_scripts]
+go_green = go_green.go_green:main
+go_green_autoland = go_green.go_green_autoland:main
+green_tracker = go_green.green_tracker:main
+offboard_control = go_green.offboard_control:main

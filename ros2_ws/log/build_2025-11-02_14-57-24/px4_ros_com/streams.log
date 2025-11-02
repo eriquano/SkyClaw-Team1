@@ -1,0 +1,156 @@
+[0.056s] Invoking command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /home/rschnurr/SkyClaw-Team1/ros2_ws/src/px4_ros_com -DCMAKE_INSTALL_PREFIX=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com
+[0.315s] -- The C compiler identification is GNU 11.4.0
+[0.489s] -- The CXX compiler identification is GNU 11.4.0
+[0.717s] -- Detecting C compiler ABI info
+[0.920s] -- Detecting C compiler ABI info - done
+[0.928s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.929s] -- Detecting C compile features
+[0.929s] -- Detecting C compile features - done
+[0.932s] -- Detecting CXX compiler ABI info
+[1.070s] -- Detecting CXX compiler ABI info - done
+[1.083s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.083s] -- Detecting CXX compile features
+[1.083s] -- Detecting CXX compile features - done
+[1.083s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.524s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.625s] -- Found builtin_interfaces: 1.2.2 (/opt/ros/humble/share/builtin_interfaces/cmake)
+[1.762s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.767s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.780s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.793s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.813s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.839s] -- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)
+[1.863s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[1.868s] -- Found geometry_msgs: 4.9.0 (/opt/ros/humble/share/geometry_msgs/cmake)
+[1.948s] -- Found px4_msgs: 2.0.1 (/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/share/px4_msgs/cmake)
+[1.974s] -- Found rclcpp: 16.0.15 (/opt/ros/humble/share/rclcpp/cmake)
+[2.092s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[2.102s] -- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[3.264s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[4.264s] -- Found FastRTPS: /opt/ros/humble/include  
+[6.082s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[6.111s] -- Looking for pthread.h
+[6.264s] -- Looking for pthread.h - found
+[6.265s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[6.415s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[6.416s] -- Found Threads: TRUE  
+[6.512s] -- Found sensor_msgs: 4.9.0 (/opt/ros/humble/share/sensor_msgs/cmake)
+[6.541s] -- Found rclpy: 3.3.17 (/opt/ros/humble/share/rclpy/cmake)
+[6.551s] -- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[6.768s] -- Added test 'copyright' to check source files copyright and LICENSE
+[6.777s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[6.778s] -- Configured cppcheck include dirs: /home/rschnurr/SkyClaw-Team1/ros2_ws/src/px4_ros_com/include;$<BUILD_INTERFACE:/home/rschnurr/SkyClaw-Team1/ros2_ws/src/px4_ros_com/include/px4_ros_com>
+[6.778s] -- Configured cppcheck exclude dirs and/or files: 
+[6.785s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[6.786s] -- Configured cpplint exclude dirs and/or files: 
+[6.788s] -- Added test 'flake8' to check Python code syntax and style conventions
+[6.791s] -- Added test 'lint_cmake' to check CMake code style
+[6.793s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[6.798s] -- Added test 'uncrustify' to check C / C++ code style
+[6.798s] -- Configured uncrustify additional arguments: 
+[6.800s] -- Added test 'xmllint' to check XML markup files
+[6.803s] -- Configuring done
+[6.859s] -- Generating done
+[6.875s] -- Build files have been written to: /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com
+[6.892s] Invoked command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com' returned '0': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /home/rschnurr/SkyClaw-Team1/ros2_ws/src/px4_ros_com -DCMAKE_INSTALL_PREFIX=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com
+[6.895s] Invoking command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com -- -j16 -l16
+[6.976s] [  8%] [32mBuilding CXX object CMakeFiles/sensor_combined_listener.dir/src/examples/listeners/sensor_combined_listener.cpp.o[0m
+[6.978s] [ 25%] [32mBuilding CXX object CMakeFiles/offboard_control.dir/src/examples/offboard/offboard_control.cpp.o[0m
+[6.979s] [ 25%] [32mBuilding CXX object CMakeFiles/frame_transforms.dir/src/lib/frame_transforms.cpp.o[0m
+[6.981s] [ 33%] [32mBuilding CXX object CMakeFiles/offboard_control_srv.dir/src/examples/offboard/offboard_control_srv.cpp.o[0m
+[6.981s] [ 41%] [32mBuilding CXX object CMakeFiles/vehicle_gps_position_listener.dir/src/examples/listeners/vehicle_gps_position_listener.cpp.o[0m
+[6.982s] [ 50%] [32mBuilding CXX object CMakeFiles/debug_vect_advertiser.dir/src/examples/advertisers/debug_vect_advertiser.cpp.o[0m
+[6.996s] [ 50%] Built target ament_cmake_python_copy_px4_ros_com
+[7.355s] running egg_info
+[7.381s] creating px4_ros_com.egg-info
+[7.382s] writing px4_ros_com.egg-info/PKG-INFO
+[7.384s] writing dependency_links to px4_ros_com.egg-info/dependency_links.txt
+[7.384s] writing top-level names to px4_ros_com.egg-info/top_level.txt
+[7.385s] writing manifest file 'px4_ros_com.egg-info/SOURCES.txt'
+[7.446s] reading manifest file 'px4_ros_com.egg-info/SOURCES.txt'
+[7.447s] writing manifest file 'px4_ros_com.egg-info/SOURCES.txt'
+[7.501s] [ 50%] Built target ament_cmake_python_build_px4_ros_com_egg
+[28.772s] [ 66%] [32m[1mLinking CXX executable debug_vect_advertiser[0m
+[28.778s] [ 66%] [32m[1mLinking CXX executable offboard_control[0m
+[29.505s] [ 66%] Built target debug_vect_advertiser
+[29.554s] [ 66%] Built target offboard_control
+[33.544s] [ 75%] [32m[1mLinking CXX shared library libframe_transforms.so[0m
+[34.006s] [ 75%] Built target frame_transforms
+[34.627s] [ 83%] [32m[1mLinking CXX executable offboard_control_srv[0m
+[34.957s] [ 83%] Built target offboard_control_srv
+[38.236s] [ 91%] [32m[1mLinking CXX executable vehicle_gps_position_listener[0m
+[38.293s] [100%] [32m[1mLinking CXX executable sensor_combined_listener[0m
+[38.706s] [100%] Built target vehicle_gps_position_listener
+[38.713s] [100%] Built target sensor_combined_listener
+[38.797s] Invoked command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com' returned '0': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com -- -j16 -l16
+[38.831s] Invoking command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com
+[38.852s] -- Install configuration: ""
+[38.862s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/sensor_combined_listener
+[38.867s] -- Set runtime path of "/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/sensor_combined_listener" to ""
+[38.869s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/vehicle_gps_position_listener
+[38.872s] -- Set runtime path of "/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/vehicle_gps_position_listener" to ""
+[38.872s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/debug_vect_advertiser
+[38.873s] -- Set runtime path of "/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/debug_vect_advertiser" to ""
+[38.873s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control
+[38.874s] -- Set runtime path of "/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control" to ""
+[38.874s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control_srv
+[38.876s] -- Set runtime path of "/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control_srv" to ""
+[38.877s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/library_path.sh
+[38.878s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/library_path.dsv
+[38.878s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/include/px4_ros_com
+[38.879s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/include/px4_ros_com/frame_transforms.h:Zone.Identifier
+[38.880s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/include/px4_ros_com/frame_transforms.h
+[38.881s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/libframe_transforms.so
+[38.886s] -- Set runtime path of "/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/libframe_transforms.so" to ""
+[38.886s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch
+[38.887s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/offboard_control_launch.yaml
+[38.887s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/sensor_combined_listener.launch.py:Zone.Identifier
+[38.888s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/sensor_combined_listener.launch.py
+[38.888s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/offboard_control_launch.yaml:Zone.Identifier
+[38.889s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test
+[38.890s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/__init__.py:Zone.Identifier
+[38.890s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_input.py:Zone.Identifier
+[38.891s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_output.py
+[38.891s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/pipeline_io_test.py:Zone.Identifier
+[38.891s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/pipeline_io_test.py
+[38.892s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/__init__.py
+[38.892s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_output.py:Zone.Identifier
+[38.892s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_input.py
+[38.893s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/pythonpath.sh
+[38.893s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/pythonpath.dsv
+[38.893s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info
+[38.894s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/SOURCES.txt
+[38.895s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/dependency_links.txt
+[38.895s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/PKG-INFO
+[38.895s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/top_level.txt
+[38.895s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com
+[38.896s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/module_to_import.py
+[38.896s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/__init__.py:Zone.Identifier
+[38.897s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/__init__.py
+[38.897s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/module_to_import.py:Zone.Identifier
+[38.984s] Listing '/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com'...
+[38.984s] Compiling '/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/__init__.py'...
+[38.984s] Compiling '/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/module_to_import.py'...
+[38.990s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control.py
+[38.992s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/ament_index/resource_index/package_run_dependencies/px4_ros_com
+[38.992s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/ament_index/resource_index/parent_prefix_path/px4_ros_com
+[38.993s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/ament_prefix_path.sh
+[38.993s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/ament_prefix_path.dsv
+[38.993s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/path.sh
+[38.994s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/path.dsv
+[38.994s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.bash
+[38.994s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.sh
+[38.995s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.zsh
+[38.995s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.dsv
+[38.995s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/package.dsv
+[38.997s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/ament_index/resource_index/packages/px4_ros_com
+[38.997s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/export_frame_transformsExport.cmake
+[38.998s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/export_frame_transformsExport-noconfig.cmake
+[38.998s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_dependencies-extras.cmake
+[38.999s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_targets-extras.cmake
+[38.999s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_include_directories-extras.cmake
+[38.999s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_libraries-extras.cmake
+[39.000s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/px4_ros_comConfig.cmake
+[39.000s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/px4_ros_comConfig-version.cmake
+[39.001s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/package.xml
+[39.018s] Invoked command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com' returned '0': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com
