@@ -1,4 +1,6 @@
 
+"""Supposed to subscribe to a camera feed and publish both a vector and a camera stream with drawings on it"""
+
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Vector3Stamped

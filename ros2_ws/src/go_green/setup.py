@@ -28,6 +28,7 @@ setup(
             'go_green = go_green.go_green:main',
             'go_green_autoland = go_green.go_green_autoland:main',
             'green_tracker = go_green.green_tracker:main',
+            'go_green_simple = go_green.go_green_simple:main',
         ],
     },
 )

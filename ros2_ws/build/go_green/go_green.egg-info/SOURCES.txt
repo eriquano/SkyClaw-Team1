@@ -9,10 +9,13 @@ setup.py
 ../../build/go_green/go_green.egg-info/top_level.txt
 ../../build/go_green/go_green.egg-info/zip-safe
 go_green/__init__.py
+go_green/camera_info_reader.py
 go_green/go_green.py
 go_green/go_green_autoland.py
+go_green/go_green_simple.py
 go_green/green_tracker.py
 go_green/offboard_control.py
+go_green/stream_video.py
 resource/go_green
 test/test_copyright.py
 test/test_flake8.py

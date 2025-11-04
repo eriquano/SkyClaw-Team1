@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""This is a fixed version of the example code, will not be used in our drone but was used as reference :)"""
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy, qos_profile_sensor_data

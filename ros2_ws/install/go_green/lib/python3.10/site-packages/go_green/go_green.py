@@ -1,4 +1,7 @@
 
+"""idrk what its supposed to do but rn it just takes off and finds the green cube, prbly will be used for the demo"""
+"""I think its supposed to take in a vector and move to the box"""
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy, qos_profile_sensor_data
@@ -72,7 +75,7 @@ class GoGreen(Node):
         for c in contours:
             x, y, w, h = cv2.boundingRect(c)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.putText(frame, "Green Object", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            cv2.putText(frame, "Green Cube", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
         # Display the image
         cv2.imshow('Bottom Camera', frame)
