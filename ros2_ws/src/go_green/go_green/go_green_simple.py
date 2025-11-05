@@ -128,7 +128,7 @@ class DrawFrame(Node):
                 if id1 in projected_pts and id2 in projected_pts:
                     cv2.line(frame, projected_pts[id1], projected_pts[id2], (0, 255, 0), 2)
         
-        print(f"found markers: {current_frame_ids}")
+        # print(f"found markers: {current_frame_ids}")
 
         # # Convert processed OpenCV frame back to ROS Image message
         # processed_msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
