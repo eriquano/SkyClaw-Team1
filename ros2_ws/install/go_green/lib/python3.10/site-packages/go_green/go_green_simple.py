@@ -36,7 +36,7 @@ class DrawFrame(Node):
         super().__init__('go_green_simple')
 
         # Create the puublisher for the processed video frames
-        # self.video_publisher = self.create_publisher()
+        self.video_publisher = self.create_publisher(Image, 'camera_feed', 10)
 
         # Create subscriber for video feed and info
         # TODO: replace with zed camera input
@@ -61,7 +61,28 @@ class DrawFrame(Node):
         # frame = cv2.resize(frame, (1280, 720))
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.adaptiveThreshold(gray, 255,
+                             cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                             cv2.THRESH_BINARY, 11, 2)
         corners, ids, rejected = cv2.aruco.detectMarkers(gray, ARUCO_DICT)
+
+        # do green cube stuff
+        # just putting these here for now
+        green_lower = np.array([36, 100, 100])
+        green_upper = np.array([86, 255, 255])
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, green_lower, green_upper)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # shows the green objects on screen
+        for c in contours:
+            x, y, w, h = cv2.boundingRect(c)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.putText(frame, "Green Cube", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
         for r in rejected:
             r = r.astype(int)
@@ -109,7 +130,7 @@ class DrawFrame(Node):
         
         print(f"found markers: {current_frame_ids}")
 
-        cv2.imshow("Aruco Markers", frame)
+        cv2.imshow("Processed frame", frame)
         cv2.waitKey(1)
 
     def camera_info_callback(self, msg):
