@@ -1,37 +1,47 @@
 import cv2
-import imagezmq
-import numpy as np
 
-receiver_ip = "100.86.186.99"  # <--- put Machine A's Tailscale IP here
-sender = imagezmq.ImageSender(connect_to=f"tcp://{receiver_ip}:5555")
+LAPTOP_IP = "192.168.1.10" #use Ethan's laptop IP or Sima's laptop for now
+PORT = 5000
 
-cap = cv2.imread("goat.png",  cv2.IMREAD_COLOR)
+# GStreamer pipeline to send video
+gst_out = (
+    f'appsrc ! videoconvert ! '
+    f'nvv4l2h264enc bitrate=4000000 insert-sps-pps=true ! '
+    f'rtph264pay config-interval=1 pt=96 ! '
+    f'udpsink host={LAPTOP_IP} port={PORT}'
+)
 
-# Convert to HSV (better for color detection than BGR)
-hsv = cv2.cvtColor(cap, cv2.COLOR_BGR2HSV)
+# Open camera
+cap = cv2.VideoCapture("/dev/video0")
+if not cap.isOpened():
+    print("Cannot open camera")
+    exit()
 
-# Define a "blue" color range in HSV
-lower_blue = np.array([100, 120, 50])
-upper_blue = np.array([140, 255, 255])
+# Set resolution / FPS
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+cap.set(cv2.CAP_PROP_FPS, 30)
 
-# Create a mask where blue is white and everything else is black
-mask = cv2.inRange(hsv, lower_blue, upper_blue)
+# Open output stream
+out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, 30, (1280, 720))
+if not out.isOpened():
+    print("Cannot open output pipeline")
+    exit()
 
-# Find contours in the mask
-contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+print(f"Streaming to {LAPTOP_IP}:{PORT}")
 
-if contours:
-    # Pick the largest blue contour
-    largest = max(contours, key=cv2.contourArea)
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Frame capture failed")
+        break
 
-    # Get a circle that encloses it
-    (x, y), radius = cv2.minEnclosingCircle(largest)
-    center = (int(x), int(y))
-    radius = int(radius)
+    # Example processing
+    # cv2.putText(frame, "Jetson Stream", (30, 60),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
 
-    # Draw the circle and center point on the original image
-    cv2.circle(cap, center, radius, (0, 255, 0), 3)      # green circle
-    cv2.circle(cap, center, 3, (0, 0, 255), -1)          # red center dot
+    out.write(frame)
 
-ret, jpg = cv2.imencode(".jpg", cap, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
-sender.send_jpg("goat", jpg)
+cap.release()
+out.release()
+print("Stream ended")

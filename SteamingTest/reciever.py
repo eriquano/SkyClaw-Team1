@@ -1,16 +1,29 @@
 import cv2
-import imagezmq
 
-# Listen on port 5555 on all interfaces
-image_hub = imagezmq.ImageHub(open_port="tcp://*:5555")
+PORT = 5000
 
-print("Receiver is waiting for images...")
+# GStreamer pipeline to receive video
+gst_in = (
+    f'udpsrc port={PORT} caps="application/x-rtp, encoding-name=H264, payload=96" ! '
+    f'rtph264depay ! avdec_h264 ! videoconvert ! appsink'
+)
 
+cap = cv2.VideoCapture(gst_in, cv2.CAP_GSTREAMER)
+if not cap.isOpened():
+    print("Cannot open stream")
+    exit()
 
-cam_name, jpg_buffer = image_hub.recv_jpg()
-image_hub.send_reply(b"OK")  # required handshake
+print(f"Listening for stream on port {PORT}")
 
-frame = cv2.imdecode(jpg_buffer, cv2.IMREAD_COLOR)
-cv2.imshow(cam_name, frame)
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Stream ended or no data")
+        break
 
-cv2.waitKey(0)
+    cv2.imshow("Jetson Stream", frame)
+    if cv2.waitKey(1) == 27:  # ESC to quit
+        break
+
+cap.release()
+cv2.destroyAllWindows()
