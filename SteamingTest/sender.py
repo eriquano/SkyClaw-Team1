@@ -1,29 +1,33 @@
+#!/usr/bin/env python3
+
 import cv2
 
-LAPTOP_IP = "192.168.1.10" #use Ethan's laptop IP or Sima's laptop for now
+LAPTOP_IP = "192.168.137.1" #use Ethan's laptop IP or Sima's laptop for now
 PORT = 5000
 
 # GStreamer pipeline to send video
 gst_out = (
-    f'appsrc ! videoconvert ! '
-    f'nvv4l2h264enc bitrate=4000000 insert-sps-pps=true ! '
-    f'rtph264pay config-interval=1 pt=96 ! '
-    f'udpsink host={LAPTOP_IP} port={PORT}'
+    f'appsrc emit-signals=false is-live=true block=true format=time ! '
+    f'video/x-raw,width=2560,height=720,framerate=30/1 ! '
+    f'videoconvert ! jpegenc quality=85 ! rtpjpegpay ! '
+    f'udpsink host={LAPTOP_IP} port={PORT} sync=false async=false'
 )
 
 # Open camera
 cap = cv2.VideoCapture("/dev/video0")
+
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
 
 # Set resolution / FPS
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2560)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 cap.set(cv2.CAP_PROP_FPS, 30)
 
 # Open output stream
-out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, 30, (1280, 720))
+out = cv2.VideoWriter(gst_out, cv2.CAP_GSTREAMER, 0, 30, (2560, 720))
+print("Writer is open: ", out.isOpened())
 if not out.isOpened():
     print("Cannot open output pipeline")
     exit()
@@ -45,3 +49,7 @@ while True:
 cap.release()
 out.release()
 print("Stream ended")
+
+'''
+Right now gstreamer as in the software is working, running it through the terminal works for the built in tests. However this script does not work and I am not entirely sure why. The resolution and framerate are set to be compatible with the ZED camera. Right now the encoding type of the stream is jpeg because the other encoding types weren't working on Sima's laptop, that could be an issue but I doubt it. The IP address is set to the local host address, so if you ran ipconfig on the laptop hosting the hotspot you want the one for the hotspot not just the one you see in settings. At this point, we have not been able to send anything between the computers, I think it would be valuable to try to just send any dummy message between the jetson and the laptop. there should be built in scripts with gstreamer, look up the documentation / ask Gemini 2.5 Pro >:) I will be back tomorrow i have no idea if you look through the terminal you can see all of the commands and shit I've been running.
+'''
