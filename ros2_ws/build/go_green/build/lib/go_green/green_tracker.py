@@ -107,7 +107,7 @@ class GreenTracker(Node):
             cx_right = int(M_right["m10"] / M_right["m00"])
 
             disparity = cx_left - cx_right
-            if disparity > 0:
+            if disparity > 0.1:
                 fx = self.left_info.k[0]  # focal length in pixels
                 cx = self.left_info.k[2]
                 cy = self.left_info.k[5]

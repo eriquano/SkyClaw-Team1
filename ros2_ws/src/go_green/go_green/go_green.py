@@ -53,23 +53,23 @@ class GoGreen(Node):
 
         self.desiredX = 0.0
         self.desiredY = 0.0
-        self.desiredZ = -2.0
+        self.desiredZ = -1.0
 
         # Wait a little bit to initialize nodes
         time.sleep(1.0)
         
         # Create a timer to publish control commands
-        self.timer = self.create_timer(0.1, self.timer_callback)
+        self.timer = self.create_timer(0.05, self.timer_callback)
 
     def green_vector_callback(self, msg):
         """Callback function for landing_vector"""
-        self.desiredX = msg.vector.x
-        self.desiredY = msg.vector.y
+        self.desiredX = self.vehicle_local_position.x - msg.vector.x
+        self.desiredY = self.vehicle_local_position.y - msg.vector.y
 
-        # if abs(self.vehicle_local_position.x - self.desiredX) < .1 and abs(self.vehicle_local_position.y - self.desiredY) < .1:
-        #     self.desiredZ = msg.vector.z
+        if abs(self.vehicle_local_position.x - self.desiredX) < .2 and abs(self.vehicle_local_position.y - self.desiredY) < .2:
+            self.desiredZ = max(self.vehicle_local_position.z - msg.vector.z, .5)
         
-        self.get_logger().info(f"Received vector: desiredX={self.desiredX}, desiredY={self.desiredY}")
+        self.get_logger().info(f"Received vector: desiredX={self.desiredX}, desiredY={self.desiredY}, desiredZ={self.desiredZ}")
 
     def bottom_camera_callback(self, msg):
         """Callback function for bottom_camera topic subscriber"""

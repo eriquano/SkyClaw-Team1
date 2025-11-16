@@ -1,0 +1,79 @@
+[0.170s] Invoking command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com': CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com -- -j16 -l16
+[0.815s] [ 25%] Built target debug_vect_advertiser
+[0.815s] [ 41%] Built target offboard_control
+[0.815s] [ 50%] Built target sensor_combined_listener
+[0.815s] [ 66%] Built target frame_transforms
+[0.815s] [ 66%] Built target ament_cmake_python_copy_px4_ros_com
+[0.816s] [ 83%] Built target vehicle_gps_position_listener
+[0.816s] [100%] Built target offboard_control_srv
+[0.988s] running egg_info
+[1.026s] writing px4_ros_com.egg-info/PKG-INFO
+[1.028s] writing dependency_links to px4_ros_com.egg-info/dependency_links.txt
+[1.028s] writing top-level names to px4_ros_com.egg-info/top_level.txt
+[1.130s] reading manifest file 'px4_ros_com.egg-info/SOURCES.txt'
+[1.133s] writing manifest file 'px4_ros_com.egg-info/SOURCES.txt'
+[1.234s] [100%] Built target ament_cmake_python_build_px4_ros_com_egg
+[1.268s] Invoked command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com' returned '0': CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com -- -j16 -l16
+[1.270s] Invoking command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com': CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --install /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com
+[1.292s] -- Install configuration: ""
+[1.292s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/sensor_combined_listener
+[1.293s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/vehicle_gps_position_listener
+[1.294s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/debug_vect_advertiser
+[1.294s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control
+[1.294s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control_srv
+[1.295s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/library_path.sh
+[1.295s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/library_path.dsv
+[1.295s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/include/px4_ros_com
+[1.296s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/include/px4_ros_com/frame_transforms.h:Zone.Identifier
+[1.296s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/include/px4_ros_com/frame_transforms.h
+[1.299s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/libframe_transforms.so
+[1.299s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch
+[1.300s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/offboard_control_launch.yaml
+[1.300s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/sensor_combined_listener.launch.py:Zone.Identifier
+[1.300s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/sensor_combined_listener.launch.py
+[1.300s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//launch/offboard_control_launch.yaml:Zone.Identifier
+[1.301s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test
+[1.301s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/__init__.py:Zone.Identifier
+[1.301s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_input.py:Zone.Identifier
+[1.301s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_output.py
+[1.301s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/pipeline_io_test.py:Zone.Identifier
+[1.301s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/pipeline_io_test.py
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/__init__.py
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_output.py:Zone.Identifier
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com//test/test_input.py
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/pythonpath.sh
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/pythonpath.dsv
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info
+[1.302s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/SOURCES.txt
+[1.302s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/dependency_links.txt
+[1.302s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/PKG-INFO
+[1.302s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com-0.1.0-py3.10.egg-info/top_level.txt
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/module_to_import.py
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/__init__.py:Zone.Identifier
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/__init__.py
+[1.302s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com/module_to_import.py:Zone.Identifier
+[1.393s] Listing '/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/local/lib/python3.10/dist-packages/px4_ros_com'...
+[1.414s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib/px4_ros_com/offboard_control.py
+[1.415s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/ament_index/resource_index/package_run_dependencies/px4_ros_com
+[1.416s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/ament_index/resource_index/parent_prefix_path/px4_ros_com
+[1.417s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/ament_prefix_path.sh
+[1.417s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/ament_prefix_path.dsv
+[1.418s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/path.sh
+[1.418s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/environment/path.dsv
+[1.418s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.bash
+[1.418s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.sh
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.zsh
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/local_setup.dsv
+[1.419s] -- Installing: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/package.dsv
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/ament_index/resource_index/packages/px4_ros_com
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/export_frame_transformsExport.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/export_frame_transformsExport-noconfig.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_dependencies-extras.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_targets-extras.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_include_directories-extras.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/ament_cmake_export_libraries-extras.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/px4_ros_comConfig.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/cmake/px4_ros_comConfig-version.cmake
+[1.419s] -- Up-to-date: /home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/share/px4_ros_com/package.xml
+[1.427s] Invoked command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com' returned '0': CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green:/opt/ros/humble LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_ros_com/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --install /home/rschnurr/SkyClaw-Team1/ros2_ws/build/px4_ros_com
