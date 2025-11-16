@@ -1,17 +1,9 @@
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/camera_info_reader.py
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/stream_video.py
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/offboard_control.py
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__init__.py
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/green_tracker.py
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/go_green_autoland.py
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/go_green.py
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/go_green_simple.py
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/camera_info_reader.cpython-310.pyc
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/stream_video.cpython-310.pyc
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/offboard_control.cpython-310.pyc
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/__init__.cpython-310.pyc
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/green_tracker.cpython-310.pyc
-/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/go_green_autoland.cpython-310.pyc
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/go_green.cpython-310.pyc
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/__pycache__/go_green_simple.cpython-310.pyc
 /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/share/ament_index/resource_index/packages/go_green

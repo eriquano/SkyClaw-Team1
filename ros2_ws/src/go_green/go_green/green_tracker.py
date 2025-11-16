@@ -67,6 +67,18 @@ class GreenTracker(Node):
     def right_info_callback(self, msg):
         self.right_info = msg
 
+    def publish_green_vector(self, x: float, y: float, z: float):
+        """Publish the green vector."""
+        msg = Vector3Stamped()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = "bottom_camera"   # or whatever your frame is
+
+        msg.vector.x = float(x)
+        msg.vector.y = float(y)
+        msg.vector.z = float(z)
+
+        self.green_tracker_vector_publisher.publish(msg)
+
     def timer_callback(self) -> None:
         """Callback function for the timer."""
         if self.left_image is None or self.right_image is None:
@@ -106,6 +118,8 @@ class GreenTracker(Node):
                 Y = (cy_left - cy) * Z / fx
 
                 self.get_logger().info(f"3D Vector to object: X={X:.2f}m, Y={Y:.2f}m, Z={Z:.2f}m")
+
+                self.publish_green_vector(X, Y, Z)
 
 
     
