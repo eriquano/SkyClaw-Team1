@@ -128,9 +128,16 @@ class DrawFrame(Node):
                 if id1 in projected_pts and id2 in projected_pts:
                     cv2.line(frame, projected_pts[id1], projected_pts[id2], (0, 255, 0), 2)
         
-        print(f"found markers: {current_frame_ids}")
+        # print(f"found markers: {current_frame_ids}")
 
-        cv2.imshow("Processed frame", frame)
+        # # Convert processed OpenCV frame back to ROS Image message
+        # processed_msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
+        # processed_msg.header = msg.header
+
+        # # Publish it
+        # self.video_publisher.publish(processed_msg)
+
+        cv2.imshow('Bottom Camera', frame)
         cv2.waitKey(1)
 
     def camera_info_callback(self, msg):
