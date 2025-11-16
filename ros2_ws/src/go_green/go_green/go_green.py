@@ -6,6 +6,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy, qos_profile_sensor_data
 from px4_msgs.msg import OffboardControlMode, TrajectorySetpoint, VehicleCommand, VehicleLocalPosition, VehicleStatus
+from geometry_msgs.msg import Vector3Stamped
 import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
@@ -41,6 +42,8 @@ class GoGreen(Node):
             VehicleStatus, '/fmu/out/vehicle_status', self.vehicle_status_callback, qos_profile)
         self.camera_subscriber = self.create_subscription(
             Image, '/iris/bottom_camera/stereo_camera/left/image_raw', self.bottom_camera_callback, qos_profile=qos_profile_sensor_data)
+        self.vector_subscriber = self.create_subscription(
+            Vector3Stamped, 'landing_vector', self.green_vector_callback, 10)
         
         # Initialize variables
         self.offboard_setpoint_counter = 0
@@ -48,11 +51,25 @@ class GoGreen(Node):
         self.vehicle_status = VehicleStatus()
         self.bridge = CvBridge()
 
+        self.desiredX = 0.0
+        self.desiredY = 0.0
+        self.desiredZ = -2.0
+
         # Wait a little bit to initialize nodes
         time.sleep(1.0)
         
         # Create a timer to publish control commands
         self.timer = self.create_timer(0.1, self.timer_callback)
+
+    def green_vector_callback(self, msg):
+        """Callback function for landing_vector"""
+        self.desiredX = msg.vector.x
+        self.desiredY = msg.vector.y
+
+        # if abs(self.vehicle_local_position.x - self.desiredX) < .1 and abs(self.vehicle_local_position.y - self.desiredY) < .1:
+        #     self.desiredZ = msg.vector.z
+        
+        self.get_logger().info(f"Received vector: desiredX={self.desiredX}, desiredY={self.desiredY}")
 
     def bottom_camera_callback(self, msg):
         """Callback function for bottom_camera topic subscriber"""
@@ -77,7 +94,7 @@ class GoGreen(Node):
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(frame, "Green Cube", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
-        
+
 
         # Display the image
         cv2.imshow('Bottom Camera', frame)
@@ -145,7 +162,7 @@ class GoGreen(Node):
     def timer_callback(self) -> None:
         """Callback function for the timer."""
         self.publish_offboard_control_heartbeat_signal()
-        self.publish_position_setpoint(0.0, 0.0, -5.0)
+        self.publish_position_setpoint(self.desiredX, self.desiredY, self.desiredZ)
 
         if self.offboard_setpoint_counter == 0:
             self.engage_offboard_mode()
