@@ -1,0 +1,36 @@
+[2.640s] Invoking command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/src/go_green': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/go_green build --build-base /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build install --record /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/install.log --single-version-externally-managed install_data
+[3.540s] running egg_info
+[3.603s] writing ../../build/go_green/go_green.egg-info/PKG-INFO
+[3.607s] writing dependency_links to ../../build/go_green/go_green.egg-info/dependency_links.txt
+[3.608s] writing entry points to ../../build/go_green/go_green.egg-info/entry_points.txt
+[3.608s] writing requirements to ../../build/go_green/go_green.egg-info/requires.txt
+[3.610s] writing top-level names to ../../build/go_green/go_green.egg-info/top_level.txt
+[3.700s] reading manifest file '../../build/go_green/go_green.egg-info/SOURCES.txt'
+[3.704s] writing manifest file '../../build/go_green/go_green.egg-info/SOURCES.txt'
+[3.706s] running build
+[3.706s] running build_py
+[3.707s] copying go_green/green.launch.py -> /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build/lib/go_green
+[3.708s] copying go_green/__init__.py -> /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build/lib/go_green
+[3.709s] copying go_green/green_tracker.py -> /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build/lib/go_green
+[3.710s] copying go_green/go_green.py -> /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build/lib/go_green
+[3.711s] copying go_green/go_green_simple.py -> /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build/lib/go_green
+[3.712s] running install
+[3.724s] running install_lib
+[3.772s] copying /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build/lib/go_green/green.launch.py -> /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green
+[3.773s] copying /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build/lib/go_green/go_green.py -> /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green
+[3.776s] byte-compiling /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/green.launch.py to green.launch.cpython-310.pyc
+[3.777s] byte-compiling /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green/go_green.py to go_green.cpython-310.pyc
+[3.788s] running install_data
+[3.789s] copying resource/go_green -> /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/share/ament_index/resource_index/packages
+[3.791s] copying package.xml -> /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/share/go_green
+[3.792s] running install_egg_info
+[3.856s] removing '/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green-0.0.0-py3.10.egg-info' (and everything under it)
+[3.859s] Copying ../../build/go_green/go_green.egg-info to /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages/go_green-0.0.0-py3.10.egg-info
+[3.868s] running install_scripts
+[3.994s] Installing go_green script to /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/go_green
+[3.995s] Installing go_green_autoland script to /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/go_green
+[3.999s] Installing go_green_simple script to /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/go_green
+[4.002s] Installing green_tracker script to /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/go_green
+[4.003s] Installing offboard_control script to /home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/go_green
+[4.008s] writing list of installed files to '/home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/install.log'
+[4.154s] Invoked command in '/home/rschnurr/SkyClaw-Team1/ros2_ws/src/go_green' returned '0': AMENT_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs LD_LIBRARY_PATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/go_green/lib/python3.10/site-packages:/home/rschnurr/SkyClaw-Team1/ros2_ws/install/px4_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/go_green build --build-base /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/build install --record /home/rschnurr/SkyClaw-Team1/ros2_ws/build/go_green/install.log --single-version-externally-managed install_data

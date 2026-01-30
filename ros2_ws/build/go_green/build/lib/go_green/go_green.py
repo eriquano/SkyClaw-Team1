@@ -63,13 +63,15 @@ class GoGreen(Node):
 
     def green_vector_callback(self, msg):
         """Callback function for landing_vector"""
-        self.desiredX = self.vehicle_local_position.x - msg.vector.x
-        self.desiredY = self.vehicle_local_position.y - msg.vector.y
+        if (msg.vector.z > 0.5):
+            self.desiredX = self.vehicle_local_position.x - msg.vector.x
+            self.desiredY = self.vehicle_local_position.y - msg.vector.y
 
         # if abs(self.vehicle_local_position.x - self.desiredX) < .2 and abs(self.vehicle_local_position.y - self.desiredY) < .2:
-        #     self.desiredZ = self.vehicle_local_position.z - msg.vector.z + .5
+        #     self.desiredZ = max(self.vehicle_local_position.z - msg.vector.z, .5)
         
-        self.get_logger().info(f"Received vector: desiredX={self.desiredX}, desiredY={self.desiredY}, desiredZ={self.desiredZ}")
+        self.get_logger().info(f"Desired vector: desiredX={self.desiredX}, desiredY={self.desiredY}, desiredZ={self.desiredZ}")
+        self.get_logger().info(f"Received vector: receivedX={msg.vector.x}, receivedY={msg.vector.y}, receivedZ={msg.vector.z}")
 
     def bottom_camera_callback(self, msg):
         """Callback function for bottom_camera topic subscriber"""

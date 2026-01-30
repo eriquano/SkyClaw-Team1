@@ -12,6 +12,7 @@ go_green/__init__.py
 go_green/go_green.py
 go_green/go_green_simple.py
 go_green/green_tracker.py
+launch/green.launch.py
 resource/go_green
 test/test_copyright.py
 test/test_flake8.py
