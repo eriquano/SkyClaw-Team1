@@ -126,7 +126,7 @@ class GreenTracker(Node):
 
                 avg_vector = np.mean(self.vector_history, axis=0)
 
-                self.get_logger().info(f"3D Vector to object (Smoothed): X={avg_vector[0]:.2f}m, Y={avg_vector[1]:.2f}m, Z={avg_vector[2]:.2f}m")
+                # self.get_logger().info(f"3D Vector to object (Smoothed): X={avg_vector[0]:.2f}m, Y={avg_vector[1]:.2f}m, Z={avg_vector[2]:.2f}m")
                 
                 self.publish_green_vector(avg_vector[0], avg_vector[1], avg_vector[2])
 

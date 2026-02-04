@@ -1,4 +1,3 @@
-
 """idrk what its supposed to do but rn it just takes off and finds the green cube, prbly will be used for the demo"""
 """I think its supposed to take in a vector and move to the box"""
 
@@ -48,11 +47,6 @@ class GoGreen(Node):
             Vector3Stamped, 'landing_vector', self.green_vector_callback, 10)
         
         # Control Parameters
-        self.kp_xy = 1.2
-        self.kp_z = 1.8
-        self.max_velocity_xy = 0.5
-        self.max_velocity_z = 2.0
-        self.position_threshold = 0.1
         self.hover_height = -1.5
 
         # Initialize variables
@@ -61,16 +55,13 @@ class GoGreen(Node):
         self.vehicle_status = VehicleStatus()
         self.bridge = CvBridge()
 
-        self.desiredX = 0.0
-        self.desiredY = 0.0
-        self.desiredZ = self.hover_height
-
-        self.velocity_x = 0.0
-        self.velocity_y = 0.0
-        self.velocity_z = 0.0
-
-        self.vector_valid = False
-        self.last_vector_time = self.get_clock().now()
+        # Target tracking
+        self.target_position = None
+        self.target_locked = False
+        self.vector_samples = []
+        self.samples_needed = 500  # ~1 second at 100Hz
+        self.collecting_samples = False
+        self.allow_sampling = False
 
         # Wait a little bit to initialize nodes
         time.sleep(1.0)
@@ -81,51 +72,53 @@ class GoGreen(Node):
     def green_vector_callback(self, msg):
         """Callback function for landing_vector"""
 
-        # don't do anything if box is too far away
-        if msg.vector.z < 0.2 or msg.vector.z > 3.0:
-            self.vector_valid = False
+        # Don't collect if we already have a target locked
+        if self.target_locked:
             return
         
-        self.vector_valid = True
-        self.last_vector_time = self.get_clock().now()
-
-        offset_x = -msg.vector.x
-        offset_y = -msg.vector.y
-
-        horizontal_distance = np.sqrt(offset_x**2 + offset_y**2)
-
-        if horizontal_distance < self.position_threshold:
-            self.get_logger().info("HOLDING POSITION - Above target!")
-            self.velocity_x = self.kp_xy * offset_x * 0.3
-            self.velocity_y = self.kp_xy * offset_y * 0.3
-            self.velocity_z = 0.0
+        # Don't do anything until we reach hover height
+        if not self.allow_sampling:
             return
 
-        self.velocity_x = self.kp_xy * offset_x
-        self.velocity_y = self.kp_xy * offset_y
+        # Don't do anything if box is too far away
+        if msg.vector.z < 0.2 or msg.vector.z > 3.0:
+            return
+        
+        # Start collecting samples
+        if not self.collecting_samples:
+            self.collecting_samples = True
+            self.vector_samples = []
+            self.get_logger().info("Started collecting position samples...")
 
-        velocity_magnitude = np.sqrt(self.velocity_x**2 + self.velocity_y**2)
-        if velocity_magnitude > self.max_velocity_xy:
-            self.velocity_x = self.velocity_x / velocity_magnitude * self.max_velocity_xy
-            self.velocity_y = self.velocity_y / velocity_magnitude * self.max_velocity_xy
+        # Add sample (offset in camera frame)
+        offset_x = -msg.vector.x
+        offset_y = -msg.vector.y
+        self.vector_samples.append([offset_x, offset_y])
 
-        # Altitude control - maintain hover height
-        altitude_error = self.hover_height - self.vehicle_local_position.z
-        # desired_distance_to_cube = 1.5
-        # altitude_error = desired_distance_to_cube - msg.vector.z
-        self.velocity_z = self.kp_z * altitude_error
-        # self.velocity_z = np.clip(self.velocity_z, -self.max_velocity_z, self.max_velocity_z)
-
-        self.get_logger().info(
-            f"Offset (world): X={offset_x:.2f}m, Y={offset_y:.2f}m, Z={msg.vector.z:.2f}m | "
-            f"Velocity cmd: vx={self.velocity_x:.2f}, vy={self.velocity_y:.2f}, vz={self.velocity_z:.2f}"
-        )
-        self.get_logger().info(
-            f"Altitude: current_z={self.vehicle_local_position.z:.2f}m, "
-            f"target={self.hover_height:.2f}m, error={altitude_error:.2f}m, vz={self.velocity_z:.2f}"
-        )
-        # self.get_logger().info(f"Desired vector: desiredX={self.velocity_x}, desiredY={self.velocity_y}, desiredZ={self.velocity_z}")
-        # self.get_logger().info(f"Received vector: receivedX={msg.vector.x}, receivedY={msg.vector.y}, receivedZ={msg.vector.z}")
+        # Check if we have enough samples
+        if len(self.vector_samples) >= self.samples_needed:
+            # Calculate average offset
+            avg_offset = np.mean(self.vector_samples, axis=0)
+            
+            # Convert to world position (add to current drone position)
+            target_x = self.vehicle_local_position.x + avg_offset[0]
+            target_y = self.vehicle_local_position.y + avg_offset[1]
+            target_z = self.hover_height
+            
+            self.target_position = (target_x, target_y, target_z)
+            self.target_locked = True
+            self.collecting_samples = False
+            
+            self.get_logger().info(
+                f"TARGET LOCKED! Moving to: X={target_x:.2f}m, Y={target_y:.2f}m, Z={target_z:.2f}m"
+            )
+            self.get_logger().info(
+                f"(Averaged {len(self.vector_samples)} samples, offset: X={avg_offset[0]:.2f}m, Y={avg_offset[1]:.2f}m)"
+            )
+        else:
+            # Log progress
+            if len(self.vector_samples) % 20 == 0:
+                self.get_logger().info(f"Collecting samples: {len(self.vector_samples)}/{self.samples_needed}")
 
     def bottom_camera_callback(self, msg):
         """Callback function for bottom_camera topic subscriber"""
@@ -148,9 +141,15 @@ class GoGreen(Node):
         for c in contours:
             x, y, w, h = cv2.boundingRect(c)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.putText(frame, "Green Cube", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-
-
+            
+            # Show status
+            if self.target_locked:
+                cv2.putText(frame, "TARGET LOCKED", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            elif self.collecting_samples:
+                cv2.putText(frame, f"Sampling {len(self.vector_samples)}/{self.samples_needed}", 
+                           (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+            else:
+                cv2.putText(frame, "Green Cube", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
         # Display the image
         cv2.imshow('Bottom Camera', frame)
@@ -176,14 +175,11 @@ class GoGreen(Node):
             VehicleCommand.VEHICLE_CMD_DO_SET_MODE, param1=1.0, param2=6.0)
         self.get_logger().info("Switching to offboard mode")
 
-    def publish_offboard_control_heartbeat_signal(self, velocity=False):
+    def publish_offboard_control_heartbeat_signal(self):
         """Publish the offboard control mode."""
         msg = OffboardControlMode()
         msg.position = True
         msg.velocity = False
-        if velocity:
-            msg.position = False
-            msg.velocity = True
         msg.acceleration = False
         msg.attitude = False
         msg.body_rate = False
@@ -197,16 +193,6 @@ class GoGreen(Node):
         msg.yaw = 1.57079  # (90 degree)
         msg.timestamp = int(self.get_clock().now().nanoseconds / 1000)
         self.trajectory_setpoint_publisher.publish(msg)
-        self.get_logger().info(f"Publishing position setpoints {[x, y, z]}")
-
-    def publish_velocity_setpoint(self, vx: float, vy: float, vz: float):
-        """Publish velocity setpoint."""
-        msg = TrajectorySetpoint()
-        msg.velocity = [vx, vy, vz]
-        msg.yaw = 1.57079  # 90 degrees
-        msg.timestamp = int(self.get_clock().now().nanoseconds / 1000)
-        self.trajectory_setpoint_publisher.publish(msg)
-        self.get_logger().info(f"Publishing velocity setpoints {[vx, vy, vz]}")
 
     def publish_vehicle_command(self, command, **params) -> None:
         """Publish a vehicle command."""
@@ -229,16 +215,15 @@ class GoGreen(Node):
 
     def timer_callback(self) -> None:
         """Callback function for the timer."""
-        # Let the drone take off and get stable first
-        if self.offboard_setpoint_counter == 0:
-            self.publish_offboard_control_heartbeat_signal()
-            self.publish_position_setpoint(self.vehicle_local_position.x, self.vehicle_local_position.y, self.hover_height)
-
-            self.offboard_setpoint_counter += 1
-            return
-        elif self.offboard_setpoint_counter < 20:
-            self.publish_offboard_control_heartbeat_signal()
-            self.publish_position_setpoint(self.vehicle_local_position.x, self.vehicle_local_position.y, self.hover_height)
+        self.publish_offboard_control_heartbeat_signal()
+        
+        # Initial takeoff sequence
+        if self.offboard_setpoint_counter < 20:
+            self.publish_position_setpoint(
+                self.vehicle_local_position.x, 
+                self.vehicle_local_position.y, 
+                self.hover_height
+            )
 
             if self.offboard_setpoint_counter == 10:
                 self.engage_offboard_mode()
@@ -250,23 +235,50 @@ class GoGreen(Node):
                 self.offboard_setpoint_counter += 1
             return
         
-        self.publish_offboard_control_heartbeat_signal(True)
-
-        # Check if we've lost the vector
-        time_since_vector = (self.get_clock().now() - self.last_vector_time).nanoseconds / 1e9
-        if time_since_vector > 0.5:
-            self.vector_valid = False
-            self.get_logger().warn("LOST TRACKING - stopping horizontal movement")
-            # Stop moving if we lose tracking
-            self.velocity_x = 0.0
-            self.velocity_y = 0.0
-            # But maintain altitude -1 * (hover + z)
-            altitude_error = self.hover_height - self.vehicle_local_position.z
-            self.velocity_z = self.kp_z * altitude_error
-            self.velocity_z = np.clip(self.velocity_z, -self.max_velocity_z, self.max_velocity_z)
-
-
-        self.publish_velocity_setpoint(self.velocity_x, self.velocity_y, self.velocity_z)
+        # Check if we're at hover height (within 10cm)
+        at_hover_height = abs(self.vehicle_local_position.z - self.hover_height) < 0.1
+        
+        if not at_hover_height and not self.target_locked:
+            # Still climbing to hover height - don't collect samples yet
+            self.publish_position_setpoint(
+                self.vehicle_local_position.x,
+                self.vehicle_local_position.y,
+                self.hover_height
+            )
+            if self.offboard_setpoint_counter % 20 == 0:
+                self.get_logger().info(f"Climbing to hover height... (current: {self.vehicle_local_position.z:.2f}m, target: {self.hover_height:.2f}m)")
+            self.offboard_setpoint_counter += 1
+            return
+        
+        if not self.target_locked:
+            self.allow_sampling = True
+        
+        # If we have a target, fly to it
+        if self.target_locked and self.target_position is not None:
+            self.publish_position_setpoint(
+                self.target_position[0],
+                self.target_position[1],
+                self.target_position[2]
+            )
+            
+            # Calculate distance to target
+            dx = self.target_position[0] - self.vehicle_local_position.x
+            dy = self.target_position[1] - self.vehicle_local_position.y
+            dz = self.target_position[2] - self.vehicle_local_position.z
+            distance = np.sqrt(dx**2 + dy**2 + dz**2)
+            
+            # Log progress every 20 cycles
+            if self.offboard_setpoint_counter % 20 == 0:
+                self.get_logger().info(f"Distance to target: {distance:.2f}m")
+        else:
+            # At hover height but no target yet - just hover and wait for samples to collect
+            self.publish_position_setpoint(
+                self.vehicle_local_position.x,
+                self.vehicle_local_position.y,
+                self.hover_height
+            )
+        
+        self.offboard_setpoint_counter += 1
 
 def main(args=None) -> None:
     print('Starting offboard control node...')
@@ -289,6 +301,3 @@ if __name__ == '__main__':
         pass
     except Exception as e:
         print(e)
-
-
-
