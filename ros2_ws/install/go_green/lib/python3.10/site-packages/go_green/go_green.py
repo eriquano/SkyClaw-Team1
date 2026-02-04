@@ -70,6 +70,12 @@ class GoGreen(Node):
         self.descending = False
         self.descent_threshold = 0.15  # 15cm - close enough to start descending
         self.descent_speed = 0.2  # m/s downward
+        self.pickup_threshold = 0.4
+        self.pickup_height = 0.05  # 20cm above ground in NED
+        self.picking_up = False
+        self.pickup_start_time = None
+        self.pickup_duration = 3.0  # seconds to wait for pickup
+        self.ascending = False
 
         # Wait a little bit to initialize nodes
         time.sleep(1.0)
@@ -245,7 +251,7 @@ class GoGreen(Node):
             return
         
         # Check if we're at hover height (within 10cm)
-        at_hover_height = abs(self.vehicle_local_position.z - self.hover_height) < 0.1
+        at_hover_height = self.vehicle_local_position.z - self.hover_height < 0.1 and self.vehicle_local_position.z - self.hover_height > -0.25
         
         if not at_hover_height and not self.target_locked:
             # Still climbing to hover height - don't collect samples yet
@@ -274,16 +280,56 @@ class GoGreen(Node):
             horizontal_distance = np.sqrt(dx**2 + dy**2)
             
             # State machine for landing sequence
-            if self.descending:
-                # Already descending - keep going down
-                current_descent_target = self.vehicle_local_position.z - self.descent_speed * 0.05  # 0.05 = timer period
+            if self.ascending:
+                # Going back up to hover height
                 self.publish_position_setpoint(
                     self.target_position[0],
                     self.target_position[1],
-                    current_descent_target
+                    self.hover_height
                 )
                 if self.offboard_setpoint_counter % 20 == 0:
-                    self.get_logger().info(f"DESCENDING - Altitude: {self.vehicle_local_position.z:.2f}m, Horizontal offset: {horizontal_distance:.2f}m")
+                    self.get_logger().info(f"ASCENDING - Altitude: {self.vehicle_local_position.z:.2f}m, Target: {self.hover_height:.2f}m")
+                
+                # Check if we're back at hover height
+                if abs(self.vehicle_local_position.z - self.hover_height) < 0.1:
+                    self.get_logger().info("MISSION COMPLETE - Back at hover height!")
+                    self.ascending = False
+                    # Could add logic here to reset and look for another target
+            
+            elif self.picking_up:
+                # Waiting at pickup height
+                self.publish_position_setpoint(
+                    self.target_position[0],
+                    self.target_position[1],
+                    self.pickup_height
+                )
+                
+                elapsed = (self.get_clock().now() - self.pickup_start_time).nanoseconds / 1e9
+                if elapsed >= self.pickup_duration:
+                    self.get_logger().info(f"PICKUP COMPLETE - Ascending back to hover height")
+                    self.picking_up = False
+                    self.ascending = True
+                else:
+                    if self.offboard_setpoint_counter % 20 == 0:
+                        self.get_logger().info(f"PICKING UP - {elapsed:.1f}s / {self.pickup_duration:.1f}s")
+            
+            elif self.descending:
+                # Descending to pickup height
+                self.publish_position_setpoint(
+                    self.target_position[0],
+                    self.target_position[1],
+                    self.pickup_height
+                )
+                
+                # Check if we've reached pickup height (within 5cm)
+                if abs(self.vehicle_local_position.z - self.pickup_height) < self.pickup_threshold:
+                    self.get_logger().info(f"Reached pickup height - Starting pickup sequence")
+                    self.descending = False
+                    self.picking_up = True
+                    self.pickup_start_time = self.get_clock().now()
+                else:
+                    if self.offboard_setpoint_counter % 20 == 0:
+                        self.get_logger().info(f"DESCENDING - Altitude: {self.vehicle_local_position.z:.2f}m, Target: {self.pickup_height:.2f}m")
             
             elif self.settling:
                 # Settling - hold position and wait
@@ -340,6 +386,7 @@ class GoGreen(Node):
         
         self.offboard_setpoint_counter += 1
     
+
 def main(args=None) -> None:
     print('Starting offboard control node...')
     rclpy.init(args=args)
