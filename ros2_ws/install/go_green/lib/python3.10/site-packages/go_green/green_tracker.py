@@ -49,6 +49,9 @@ class GreenTracker(Node):
         self.bridge = CvBridge()
         self.left_image = None
         self.right_image = None
+        self.last_valid_vector = None
+        self.vector_history = []
+        self.history_size = 3
 
         # Create a timer to publish control commands
         self.timer = self.create_timer(0.01, self.timer_callback)
@@ -101,13 +104,13 @@ class GreenTracker(Node):
         M_left = cv2.moments(mask_left)
         M_right = cv2.moments(mask_right)
 
-        if M_left["m00"] > 0 and M_right["m00"] > 0:
+        if M_left["m00"] > 500 and M_right["m00"] > 500:
             cx_left = int(M_left["m10"] / M_left["m00"])
             cy_left = int(M_left["m01"] / M_left["m00"])
             cx_right = int(M_right["m10"] / M_right["m00"])
 
             disparity = cx_left - cx_right
-            if disparity > 0.1:
+            if disparity > 1:
                 fx = self.left_info.k[0]  # focal length in pixels
                 cx = self.left_info.k[2]
                 cy = self.left_info.k[5]
@@ -116,10 +119,17 @@ class GreenTracker(Node):
                 Z = (fx * B) / disparity
                 X = (cx_left - cx) * Z / fx
                 Y = (cy_left - cy) * Z / fx
+                
+                self.vector_history.append([X, Y, Z])
+                if len(self.vector_history) > self.history_size:
+                    self.vector_history.pop(0)
 
-                self.get_logger().info(f"3D Vector to object: X={X:.2f}m, Y={Y:.2f}m, Z={Z:.2f}m")
+                avg_vector = np.mean(self.vector_history, axis=0)
 
-                self.publish_green_vector(X, Y, Z)
+                self.get_logger().info(f"3D Vector to object (Smoothed): X={avg_vector[0]:.2f}m, Y={avg_vector[1]:.2f}m, Z={avg_vector[2]:.2f}m")
+                
+                self.publish_green_vector(avg_vector[0], avg_vector[1], avg_vector[2])
+
 
 
     
