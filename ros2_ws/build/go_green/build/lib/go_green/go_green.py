@@ -59,9 +59,17 @@ class GoGreen(Node):
         self.target_position = None
         self.target_locked = False
         self.vector_samples = []
-        self.samples_needed = 500  # ~1 second at 100Hz
+        self.samples_needed = 500  # We can sample more if needed, samples at 100 Hz
         self.collecting_samples = False
         self.allow_sampling = False
+
+        # Landing sequence states
+        self.settling = False
+        self.settle_start_time = None
+        self.settle_duration = 2.0  # seconds to settle before descending
+        self.descending = False
+        self.descent_threshold = 0.15  # 15cm - close enough to start descending
+        self.descent_speed = 0.2  # m/s downward
 
         # Wait a little bit to initialize nodes
         time.sleep(1.0)
@@ -219,6 +227,7 @@ class GoGreen(Node):
         
         # Initial takeoff sequence
         if self.offboard_setpoint_counter < 20:
+            self.allow_sampling = False
             self.publish_position_setpoint(
                 self.vehicle_local_position.x, 
                 self.vehicle_local_position.y, 
@@ -240,6 +249,7 @@ class GoGreen(Node):
         
         if not at_hover_height and not self.target_locked:
             # Still climbing to hover height - don't collect samples yet
+            self.allow_sampling = False
             self.publish_position_setpoint(
                 self.vehicle_local_position.x,
                 self.vehicle_local_position.y,
@@ -250,26 +260,76 @@ class GoGreen(Node):
             self.offboard_setpoint_counter += 1
             return
         
+        # We're at hover height now - allow sampling!
         if not self.target_locked:
             self.allow_sampling = True
         
         # If we have a target, fly to it
         if self.target_locked and self.target_position is not None:
-            self.publish_position_setpoint(
-                self.target_position[0],
-                self.target_position[1],
-                self.target_position[2]
-            )
+            self.allow_sampling = False
             
-            # Calculate distance to target
+            # Calculate distance to target (horizontal only)
             dx = self.target_position[0] - self.vehicle_local_position.x
             dy = self.target_position[1] - self.vehicle_local_position.y
-            dz = self.target_position[2] - self.vehicle_local_position.z
-            distance = np.sqrt(dx**2 + dy**2 + dz**2)
+            horizontal_distance = np.sqrt(dx**2 + dy**2)
             
-            # Log progress every 20 cycles
-            if self.offboard_setpoint_counter % 20 == 0:
-                self.get_logger().info(f"Distance to target: {distance:.2f}m")
+            # State machine for landing sequence
+            if self.descending:
+                # Already descending - keep going down
+                current_descent_target = self.vehicle_local_position.z - self.descent_speed * 0.05  # 0.05 = timer period
+                self.publish_position_setpoint(
+                    self.target_position[0],
+                    self.target_position[1],
+                    current_descent_target
+                )
+                if self.offboard_setpoint_counter % 20 == 0:
+                    self.get_logger().info(f"DESCENDING - Altitude: {self.vehicle_local_position.z:.2f}m, Horizontal offset: {horizontal_distance:.2f}m")
+            
+            elif self.settling:
+                # Settling - hold position and wait
+                self.publish_position_setpoint(
+                    self.target_position[0],
+                    self.target_position[1],
+                    self.target_position[2]
+                )
+                
+                # Check if settle time is up
+                elapsed = (self.get_clock().now() - self.settle_start_time).nanoseconds / 1e9
+                if elapsed >= self.settle_duration:
+                    # Check if we're close enough to descend
+                    if horizontal_distance < self.descent_threshold:
+                        self.get_logger().info(f"SETTLED - Starting descent (offset: {horizontal_distance:.3f}m)")
+                        self.settling = False
+                        self.descending = True
+                    else:
+                        self.get_logger().warn(f"Position drift too large ({horizontal_distance:.3f}m > {self.descent_threshold}m) - continuing to settle")
+                        # Reset settle timer to give it more time
+                        self.settle_start_time = self.get_clock().now()
+                else:
+                    if self.offboard_setpoint_counter % 20 == 0:
+                        self.get_logger().info(f"SETTLING - {elapsed:.1f}s / {self.settle_duration:.1f}s, offset: {horizontal_distance:.3f}m")
+            
+            elif horizontal_distance < self.descent_threshold:
+                # Close enough - start settling
+                self.get_logger().info(f"Reached target (offset: {horizontal_distance:.3f}m) - Beginning settle period")
+                self.settling = True
+                self.settle_start_time = self.get_clock().now()
+                self.publish_position_setpoint(
+                    self.target_position[0],
+                    self.target_position[1],
+                    self.target_position[2]
+                )
+            
+            else:
+                # Still approaching
+                self.publish_position_setpoint(
+                    self.target_position[0],
+                    self.target_position[1],
+                    self.target_position[2]
+                )
+                if self.offboard_setpoint_counter % 20 == 0:
+                    self.get_logger().info(f"APPROACHING - Distance: {horizontal_distance:.2f}m")
+        
         else:
             # At hover height but no target yet - just hover and wait for samples to collect
             self.publish_position_setpoint(
@@ -279,7 +339,7 @@ class GoGreen(Node):
             )
         
         self.offboard_setpoint_counter += 1
-
+    
 def main(args=None) -> None:
     print('Starting offboard control node...')
     rclpy.init(args=args)
